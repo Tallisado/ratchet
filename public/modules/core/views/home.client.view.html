@@ -1,0 +1,64 @@
+<section data-ng-controller="HomeController" data-ng-init="findVms()">
+	<div class="jumbotron text-center">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12">
+				<img alt="MEAN.JS" class="img-responsive text-center" src="modules/core/img/brand/logo.png" />
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-3 list-group-item" data-ng-repeat="vm in vms">
+					<a data-ng-href="#!/vms/{{vm._id}}" class="">
+
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.name"></h4>
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.metadata"></h4>
+							<h4 class="list-group-item-heading" ng-if44="vm.locked == true" data-ng-bind="vm."></h4>
+
+					</a>
+			</div>
+			<div class="col-md-3 list-group-item" data-ng-repeat="vm in vms">
+					<a data-ng-href="#!/vms/{{vm._id}}" class="">
+
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.name"></h4>
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.metadata"></h4>
+
+					</a>
+			</div>
+			<div class="col-md-3 list-group-item" data-ng-repeat="vm in vms">
+					<a data-ng-href="#!/vms/{{vm._id}}" class="">
+
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.name"></h4>
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.metadata"></h4>
+
+					</a>
+			</div>
+			<div class="col-md-3 list-group-item" data-ng-repeat="vm in vms">
+					<a data-ng-href="#!/vms/{{vm._id}}" class="">
+
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.name"></h4>
+							<h4 class="list-group-item-heading" ng-class="{empty: !vm.name}" data-ng-bind="vm.metadata"></h4>
+
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<p>
+				<a class="btn btn-primary btn-lg" href="http://meanjs.org" target="_blank">Learn more</a>
+			</p>
+		</div>
+	</div>
+
+	<div class="well">
+		<h2>RATCHET Documentation</h2>
+		<p>
+		  Check out the RATCHET Documentation:
+			<ul>
+				<li><a target="_blank" href="http://docs.html">INFRASTRUCTURE Documentation</a>
+				</li>
+
+			</ul>
+		</p>
+	</div>
+	<br>Enjoy,
+	<br>Automation.
+</section>

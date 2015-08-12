@@ -1,0 +1,41 @@
+<section data-ng-controller="BuildsController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>New Build</h1>
+    </div>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <label class="control-label" for="version">version</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="version" id="version" class="form-control" placeholder="version" required>
+                    </div>
+                    <select ng-model="data_connector" ng-change="update_dataconnector()" ng-options="value for value in git_branches" >
+                    </select>
+
+                    <select ng-model="data_formula">
+                      <option value="0">MergeRequest</option>
+                      <option value="1">develop</option>
+                    </select>
+
+
+                    <select ng-model="saas_webui">
+                      <option value="0">MergeRequest</option>
+                      <option value="1">develop</option>
+                    </select>
+
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+				<div data-ng-show="error" class="text-danger">
+					<strong data-ng-bind="error"></strong>
+				</div>
+            </fieldset>
+        </form>
+    </div>
+</section>
