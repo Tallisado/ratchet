@@ -1,4 +1,6 @@
 var Git = require("nodegit");
+var Q = require("q");
+
 
 var clone = require("nodegit").Clone.clone;
 

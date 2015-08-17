@@ -8,8 +8,66 @@ var mongoose = require('mongoose'),
 	Build = mongoose.model('Build'),
 	_ = require('lodash');
 
-	var Git = require("nodegit");
+	var Q = require("q");
+	var gitlab = require('gitlab')({
+	  url:   'http://nest.klipfolio.com',
+	  token: 'PLtNzzk8NTrozqxCFyGy'
+	});
 
+
+
+
+
+
+
+
+	var projectList = [];
+	var branchList = [];
+	var branchLookup = [];
+	var i = 0;
+
+	var callback = function(project_name, d, branches) {
+	  console.log('single branch listing ' +project_name + branches);
+	  var branch_names = [];
+	  for (var j = 0; j < branches.length; j++) {
+	    branch_names.push(branches[j].name);
+	  }
+	  branchLookup.push({branch:project_name, names: branch_names});
+	  if (branchLookup.length == projectList.length) {d.resolve(); console.log('last one')}
+	}
+
+
+	function getBranchData() {
+		var deferred1 = Q.defer();
+		console.log('start branch');
+		for (i = 0; i < projectList.length; i++) {
+			gitlab.projects.repository.listBranches(projectList[i].id, callback.bind(this, projectList[i].name, deferred1))
+		}
+		return deferred1.promise;
+	}
+
+	function getProjects() {
+		var deferred = Q.defer();
+		console.log('start getProjects');
+
+		gitlab.projects.all(function(projects) {
+				projectList = projects;
+				console.log('getProjects');
+				deferred.resolve();
+
+				//console.log(projects);
+		});
+		return deferred.promise;
+	};
+	//
+	// function fillData(res, builds) {
+	// 	var deferred3 = Q.defer();
+	// 	console.log('fill data')
+	// 	//console.log(branchLookup);
+	// 	var builddata = [{builds:builds},{gitdata:branchLookup}];
+	// 	res.jsonp(builddata);
+	// 	return deferred3.promise;
+	// }
 
 
 /**
@@ -73,6 +131,7 @@ exports.delete = function(req, res) {
 	});
 };
 
+
 /**
  * List of Builds
  */
@@ -85,13 +144,21 @@ exports.list = function(req, res) {
 		} else {
 			var gitdata = "";
 
-			Git.Clone("https://github.com/nodegit/nodegit", "nodegit").then(function(repository) {
-				repository.getBranch("*").then(function(ref) {
-					gitdata = ref;
-				});
-			});
-			var builddata = [{builds:builds},{gitdata:gitdata}];
-			res.jsonp(builddata);
+			// var gitlab = require('gitlab')({
+			//   url:   'http://nest.klipfolio.com',
+			//   token: 'PLtNzzk8NTrozqxCFyGy'
+			// });
+
+			var testme = function() {
+				var builddata = [{builds:builds},{gitdata:branchLookup}];
+				res.jsonp(builddata);
+			}
+
+			var get_branches = [getProjects, getBranchData, testme]
+			// run the rpc commands
+			return get_branches.reduce(function (soFar, f) {
+			    return soFar.then(f);
+			}, Q()).done();
 		}
 	});
 };

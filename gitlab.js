@@ -6,31 +6,32 @@ var gitlab = require('gitlab')({
 
 
 
-var projectList = [];
-var branchList = [];
-var branchLookup = [];
-var i = 0;
+
+	var projectList = [];
+	var branchList = [];
+	var branchLookup = [];
+	var i = 0;
+
+
+
+var callback = function(project_name, d, branches) {
+  console.log('single branch listing ' +project_name + branches);
+  var branch_names = [];
+  for (var j = 0; j < branches.length; j++) {
+    branch_names.push(branches[j].name);
+  }
+  branchLookup.push({branch:project_name, names: branch_names});
+  if (branchLookup.length == projectList.length) {d.resolve(); console.log('last one')}
+}
 
 function getBranchData() {
   var deferred1 = Q.defer();
   console.log('start branch');
   for (i = 0; i < projectList.length; i++) {
-    gitlab.projects.repository.listBranches(projectList[i].id, function(branches) {
-      var branch_names = [];
-      for (var j = 0; j < branches.length; j++) {
-        branch_names.push(branches[j].name);
-      }
-      branchLookup.push({branch:arguments[1], names: branch_names});
-      if (branchLookup.length == projectList.length) {deferred1.resolve(); console.log('last one')}
-    })
+    gitlab.projects.repository.listBranches(projectList[i].id, callback.bind(this, projectList[i].name, deferred1))
   }
   return deferred1.promise;
 }
-
-function addBranchData(data, aa){
-  console.
-}
-
 
 function getProjects() {
   var deferred = Q.defer();
@@ -46,14 +47,9 @@ function getProjects() {
   return deferred.promise;
 };
 
-function showBranches() {
+function showBranches(a) {
   var deferred3 = Q.defer();
-
-  for (var i = 0; i < projectList.length; i++) {
-    branchLookup[i].branch = projectList[i].name
-  }
-
-  console.log('show branches')
+  console.log('show branches : ' + a)
   console.log(branchLookup);
   return deferred3.promise;
 }
@@ -62,7 +58,7 @@ var get_branches = [getProjects, getBranchData, showBranches]
 // run the rpc commands
 return get_branches.reduce(function (soFar, f) {
     return soFar.then(f);
-}, Q());
+}, Q()).done(console.log('show AAAAAAAAAAAAAAAA'));
 
 
 //
