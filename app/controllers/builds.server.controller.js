@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
 	var Q = require("q");
 	var gitlab = require('gitlab')({
 	  url:   'http://nest.klipfolio.com',
-	  token: 'PLtNzzk8NTrozqxCFyGy'
+	  token: 'AEJsvP37_SzPzUypfaz4'
 	});
 
 
@@ -20,14 +20,14 @@ var mongoose = require('mongoose'),
 
 
 
-
+  var builddata;
 	var projectList = [];
 	var branchList = [];
 	var branchLookup = [];
 	var i = 0;
 
-	var callback = function(project_name, d, branches) {
-	  console.log('single branch listing ' +project_name + branches);
+	var callback = function(project_name, d, branches) {7
+	  //console.log('single branch listing ' +project_name + branches);
 	  var branch_names = [];
 	  for (var j = 0; j < branches.length; j++) {
 	    branch_names.push(branches[j].name);
@@ -142,15 +142,42 @@ exports.list = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			var gitdata = "";
+			projectList = [];
+			branchList = [];
+			branchLookup = [];
+			i = 0;
 
-			// var gitlab = require('gitlab')({
-			//   url:   'http://nest.klipfolio.com',
-			//   token: 'PLtNzzk8NTrozqxCFyGy'
-			// });
 
 			var testme = function() {
-				var builddata = [{builds:builds},{gitdata:branchLookup}];
+				var builddata = {builds:builds,gitdata:branchLookup};
+				res.jsonp(builds);
+			}
+
+			var get_branches = [getProjects, getBranchData, testme]
+			// run the rpc commands
+			return get_branches.reduce(function (soFar, f) {
+			    return soFar.then(f);
+			}, Q()).done();
+		}
+	});
+};
+
+exports.details = function(req, res) {
+	console.log('DEETS');
+	Build.find().sort('-created').populate('user', 'displayName').exec(function(err, builds) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			projectList = [];
+			branchList = [];
+			branchLookup = [];
+			i = 0;
+
+
+			var testme = function() {
+				var builddata = {builds:builds,gitdata:branchLookup};
 				res.jsonp(builddata);
 			}
 

@@ -14,7 +14,8 @@
                     <div class="controls">
                         <input type="text" data-ng-model="version" id="version" class="form-control" placeholder="version" required>
                     </div>
-                    <select ng-model="data_connector" ng-change="update_dataconnector()" ng-options="value for value in gitdata" >
+
+                    <select ng-model="data_connector" ng-change="update_dataconnector()" ng-options="build in builddata" >
                     </select>
 
                     <select ng-model="data_formula">

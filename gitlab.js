@@ -1,7 +1,7 @@
 var Q = require("q");
 var gitlab = require('gitlab')({
   url:   'http://nest.klipfolio.com',
-  token: 'PLtNzzk8NTrozqxCFyGy'
+  token: 'AEJsvP37_SzPzUypfaz4'
 });
 
 
@@ -58,7 +58,7 @@ var get_branches = [getProjects, getBranchData, showBranches]
 // run the rpc commands
 return get_branches.reduce(function (soFar, f) {
     return soFar.then(f);
-}, Q()).done(console.log('show AAAAAAAAAAAAAAAA'));
+}, new Q()));
 
 
 //
