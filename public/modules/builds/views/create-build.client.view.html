@@ -1,4 +1,4 @@
-<section data-ng-controller="BuildsController" data-ng-init="find()">
+<section data-ng-controller="BuildsController" data-ng-init="findGit()">
     <div class="page-header">
         <h1>New Build</h1>
     </div>
@@ -14,29 +14,37 @@
                     <div class="controls">
                         <input type="text" data-ng-model="version" id="version" class="form-control" placeholder="version" required>
                     </div>
+                    <div class="controls">
+                        <input type="text" data-ng-model="tc_artifacts" id="tc_artifacts" class="form-control" placeholder="tc_artifacts" required>
+                    </div>
+                    <div class="controls">
+                        <input type="text" data-ng-model="devnotes" id="devnotes" class="form-control" placeholder="devnotes" required>
+                    </div>
+                    <div class="controls" ng-repeat="git in builds.gits">
+                      <div class="col-md-4">
+                        {{git.branch}}
+                      </div>
 
-                    <select ng-model="data_connector" ng-change="update_dataconnector()" ng-options="build in builddata" >
-                    </select>
 
-                    <select ng-model="data_formula">
-                      <option value="0">MergeRequest</option>
-                      <option value="1">develop</option>
-                    </select>
+                      <div class="col-md-8">
+                        <select name="project_branches[git.branch].selected" ng-init="(project_branches[git.branch].selected = getDefaultPeg(git.branch)) && (project_branches[git.branch].name = git.branch) && (project_branches[git.branch].pegged = getDefaultPeg(git.branch))" data-ng-model="project_branches[git.branch].selected" ng-options="name for name in git.names"></select>
+                        {{BranchSelection[git.branch].selected}}
+                      </div>
 
 
-                    <select ng-model="saas_webui">
-                      <option value="0">MergeRequest</option>
-                      <option value="1">develop</option>
-                    </select>
+                    </div>
 
                 </div>
                 <div class="form-group">
                     <input type="submit" class="btn btn-default">
                 </div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
-				</div>
+      				<div data-ng-show="error" class="text-danger">
+      					<strong data-ng-bind="error"></strong>
+      				</div>
             </fieldset>
+
+
         </form>
+
     </div>
 </section>

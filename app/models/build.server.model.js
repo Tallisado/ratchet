@@ -24,31 +24,20 @@ var BuildSchema = new Schema({
 		type: String,
 		default: '0.0'
 	},
-	data_connector: {
-		type: String,
-		default: 'develop'
+	project_branches: {
+			type: Schema.Types.Mixed
 	},
-	data_formula: {
-		type: String,
-		default: 'develop'
-	},
-	saas_webui: {
-		type: String,
-		default: 'develop'
-	},
-	saas_refresh: {
-		type: String,
-		default: 'develop'
-	},
-	saas_data_provider: {
-		type: String,
-		default: 'develop'
-	},
-	artifacts : {
+	tc_artifacts : {
 		type: [Schema.Types.Mixed]
 	},
-	containerdata: {
-		type: [String]
+	tc_info: {
+		type: [Schema.Types.Mixed]
+	},
+	vm_status : {
+		type: [Boolean]
+	},
+	vm_info : {
+		type: [Schema.Types.Mixed]
 	},
 	devnotes: {
 		type: [String]

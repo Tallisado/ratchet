@@ -7,6 +7,9 @@ angular.module('builds').factory('Builds', ['$resource',
 		}, {
 			update: {
 				method: 'PUT'
+			},
+			query: {
+				method: 'GET', isArray: false
 			}
 		});
 	}

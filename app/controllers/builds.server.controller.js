@@ -8,37 +8,53 @@ var mongoose = require('mongoose'),
 	Build = mongoose.model('Build'),
 	_ = require('lodash');
 
-	var Q = require("q");
+	var Q = require('q');
 	var gitlab = require('gitlab')({
 	  url:   'http://nest.klipfolio.com',
-	  token: 'AEJsvP37_SzPzUypfaz4'
+	  token: 'Cyn17QL4YwzKAvZkgyFz'
 	});
-
-
-
-
-
 
 
   var builddata;
 	var projectList = [];
 	var branchList = [];
 	var branchLookup = [];
+	var branchLookupExplicitCtr = 0;
 	var i = 0;
 
-	var callback = function(project_name, d, branches) {7
-	  //console.log('single branch listing ' +project_name + branches);
+	var gitPeggedBranches = [
+		{name: 'data-connector', pegged: 'master'},
+		{name: 'data-formula', pegged: 'master'},
+		{name: 'saas-webui', pegged: 'develop'},
+		{name: 'refresh', pegged: 'master'},
+		{name: 'saas-data-provider', pegged: 'feature/actors'},
+		{name: 'saas-actor-commons', pegged: 'master'},
+		{name: 'saas-metrics', pegged: 'master'},
+		{name: 'expression-evaluator', pegged: 'master'},
+	]
+
+	var callback = function(project_name, d, branches) {
+	  console.log('single branch listing: ' +project_name);
+		if (branches == null) return
 	  var branch_names = [];
 	  for (var j = 0; j < branches.length; j++) {
 	    branch_names.push(branches[j].name);
 	  }
-	  branchLookup.push({branch:project_name, names: branch_names});
-	  if (branchLookup.length == projectList.length) {d.resolve(); console.log('last one')}
+		branchLookupExplicitCtr++;
+		if (project_name == 'crons' || project_name == 'saas-webui-testing' || project_name == 'ci' || project_name == 'docker-environment' || project_name == 'saas-api-testing' || project_name == 'mobile-dashboard-app') {
+			console.log('exclude');
+		} else {
+	  	branchLookup.push({branch:project_name, names: branch_names});
+		}
+	  if (branchLookupExplicitCtr == projectList.length) {d.resolve(); console.log('last one')}
 	}
 
 
 	function getBranchData() {
 		var deferred1 = Q.defer();
+		branchLookup = [];
+		branchLookupExplicitCtr = 0;
+
 		console.log('start branch');
 		for (i = 0; i < projectList.length; i++) {
 			gitlab.projects.repository.listBranches(projectList[i].id, callback.bind(this, projectList[i].name, deferred1))
@@ -74,10 +90,13 @@ var mongoose = require('mongoose'),
  * Create a Build
  */
 exports.create = function(req, res) {
+	console.log('TRYING TO SAVE ~~~~~~~~~~~~~~~ create');
+	console.log(req.body);
 	var build = new Build(req.body);
 	build.user = req.user;
 
 	build.save(function(err) {
+		console.log(build);
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -149,35 +168,7 @@ exports.list = function(req, res) {
 
 
 			var testme = function() {
-				var builddata = {builds:builds,gitdata:branchLookup};
-				res.jsonp(builds);
-			}
-
-			var get_branches = [getProjects, getBranchData, testme]
-			// run the rpc commands
-			return get_branches.reduce(function (soFar, f) {
-			    return soFar.then(f);
-			}, Q()).done();
-		}
-	});
-};
-
-exports.details = function(req, res) {
-	console.log('DEETS');
-	Build.find().sort('-created').populate('user', 'displayName').exec(function(err, builds) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			projectList = [];
-			branchList = [];
-			branchLookup = [];
-			i = 0;
-
-
-			var testme = function() {
-				var builddata = {builds:builds,gitdata:branchLookup};
+				var builddata = {builds: builds, gits: branchLookup, pegs: gitPeggedBranches};
 				res.jsonp(builddata);
 			}
 
@@ -189,6 +180,7 @@ exports.details = function(req, res) {
 		}
 	});
 };
+
 
 /**
  * Build middleware
